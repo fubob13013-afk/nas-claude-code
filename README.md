@@ -1,133 +1,166 @@
-# 🌳 NAS Claude Code — 24/7 AI 编程助手
+# 🌳 NAS Claude Code — 24/7 AI Coding Assistant · 24小时AI编程助手
 
+> Deploy Claude Code on your home NAS. Access it from anywhere, anytime — phone or desktop.
+>
 > 把 Claude Code 部署在家用 NAS 上，全天候运行，手机电脑随时访问。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Docker%20%7C%20Synology%20%7C%20QNAP%20%7C%20UGREEN-blue)]()
 
-## ✨ 这是什么
+---
 
-你是否有过这样的体验：笔记本上的 Claude Code 很好用，但一关电脑它就「死」了？
+## ✨ What & Why · 是什么 & 为什么
 
-这个项目让你把 Claude Code 部署在家里的 **NAS** 上（群晖/威联通/绿联都行），配合 **DeepSeek API**（国内直连，无需科学上网），实现：
+**EN** — Ever felt annoyed that Claude Code dies the moment you close your laptop? This project keeps it alive 24/7 on your NAS. With DeepSeek's API (direct connect, no VPN needed for China users), you get:
 
-- 🌐 **随时随地访问**：手机浏览器打开网页就能聊天
-- 🧠 **记忆共享**：Windows 本机 CC 的记忆自动同步给 NAS CC
-- 🔗 **双 CC 协作**：Windows CC 通过 MCP 直接委派任务给 NAS CC
-- 🔒 **容器隔离**：只访问指定目录，NAS 上其他文件绝对安全
-- 💰 **近乎免费**：Tailscale 免费、Syncthing 免费、DeepSeek API 按量计费（几块钱/月）
+- 🌐 **Access anywhere** — Open a web page on your phone or any browser
+- 🧠 **Shared memory** — Your desktop CC's memories auto-sync to the NAS instance
+- 🔗 **Dual CC collaboration** — Desktop CC delegates tasks to NAS CC via MCP bridge
+- 🔒 **Container isolation** — Only `/workspace` and `.claude` are mounted; admin folders stay invisible
+- 💰 **Nearly free** — Tailscale (free) + Syncthing (free) + DeepSeek API (~$1/mo)
 
-## 🏗️ 架构
+**中文** — 笔记本上的 Claude Code 一关机就掉线？把它搬到家中的 NAS 上，24小时在线：
+
+- 🌐 手机浏览器就能聊天，在外也能用
+- 🧠 Windows 本机的记忆自动同步给 NAS
+- 🔗 两台 CC 通过 MCP 桥接协作分工
+- 🔒 Docker 容器隔离，管理员文件夹完全不可见
+- 💰 几乎免费：Tailscale 个人版免费 + Syncthing 免费 + DeepSeek API 几块钱/月
+
+---
+
+## 🏗️ Architecture · 架构
 
 ```
-手机/电脑 (任意地点)
-    │ Tailscale 加密隧道
-    ▼
-NAS (Docker)
-  ├── claude-code 容器 (:3000)
-  │   ├── Claude Code v2.1 + DeepSeek API
-  │   ├── Web 聊天界面 (server.js)
-  │   └── tmux 持久化会话
-  ├── syncthing 容器 (:8384)
-  │   └── 同步 .claude 和记忆文件
-  └── Tailscale (系统)
-      └── NAS IP: 100.x.x.x
-
-Windows PC
-  ├── Claude Code (交互模式)
-  ├── MCP 桥接 → 自动调用 NAS CC
-  └── SyncTrayzor → Syncthing 客户端
+┌─────────────────────────────────────────────────┐
+│  Any Device (phone / laptop / anywhere)          │
+│         │ Tailscale WireGuard tunnel             │
+└─────────┼───────────────────────────────────────┘
+          ▼
+┌─────────────────────────────────────────────────┐
+│  Home NAS (Docker)                               │
+│                                                  │
+│  ┌─ claude-code container (:3000) ────────────┐  │
+│  │  • Claude Code v2.1 + DeepSeek API          │  │
+│  │  • Web Chat UI (server.js, 0 deps)          │  │
+│  │  • tmux persistent session                  │  │
+│  └─────────────────────────────────────────────┘  │
+│  ┌─ syncthing container (:8384) ───────────────┐  │
+│  │  • Syncs .claude/ and memory between devices │  │
+│  └─────────────────────────────────────────────┘  │
+│  ┌─ Tailscale (system) ────────────────────────┐  │
+│  │  • Secure remote tunnel, no open ports       │  │
+│  └─────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────┘
+          ↕ MCP bridge (nas_bib_chat tool)
+┌─────────────────────────────────────────────────┐
+│  Desktop PC (Windows / macOS / Linux)            │
+│  • Claude Code (interactive mode)                │
+│  • MCP Bridge → auto-delegates to NAS CC         │
+│  • SyncTrayzor → Syncthing client                │
+└─────────────────────────────────────────────────┘
 ```
 
-## 🚀 快速开始
+---
 
-### 前提条件
+## 🚀 Quick Start · 快速开始
 
-- 一台 **NAS**（群晖/威联通/绿联，能跑 Docker 就行）
-- **DeepSeek API Key**：[platform.deepseek.com](https://platform.deepseek.com) 注册获取
-- **Tailscale 账号**（免费）：[tailscale.com](https://tailscale.com)
+### Prerequisites · 前提
 
-### 1. 克隆仓库到 NAS
+- A **NAS** that runs Docker (Synology / QNAP / UGREEN / TrueNAS)
+- **DeepSeek API Key** → [platform.deepseek.com](https://platform.deepseek.com)
+- **Tailscale account** (free) → [tailscale.com](https://tailscale.com)
+
+### 1. Clone · 克隆
 
 ```bash
 git clone https://github.com/fubob13013-afk/nas-claude-code.git
 cd nas-claude-code
 ```
 
-### 2. 配置 API Key
+### 2. Configure · 配置
 
-编辑 `docker-compose.yml` 和 `settings.json`，把 `你的DeepSeek_API_Key` 替换为你的真实 Key。
+Edit `docker-compose.yml` and `settings.json`. Replace `你的DeepSeek_API_Key` with your real key.
 
-### 3. 启动服务
+### 3. Launch · 启动
 
 ```bash
-# 创建必要目录
 mkdir -p workspace claude-config
-
-# 构建并启动
 sudo docker compose up -d --build
 ```
 
-### 4. 访问
+### 4. Open · 打开
 
-浏览器打开 `http://你的NAS_IP:3000`
+Visit `http://your-nas-ip:3000` in any browser.
 
-### 5. 配置远程访问（可选）
+### 5. Remote Access (optional) · 远程访问
 
 ```bash
-# 安装 Tailscale
 curl -fsSL https://tailscale.com/install.sh | sudo sh
 sudo tailscale up
 ```
 
-之后用手机/电脑的 Tailscale IP 即可远程访问。
+Then access via your Tailscale IP (`100.x.x.x:3000`) from anywhere.
 
-### 6. 配置记忆同步（可选）
+### 6. Memory Sync (optional) · 记忆同步
 
-参考 `sync-memory.sh`，搭配 Syncthing 实现 Windows 和 NAS 的记忆双向同步。
+See `sync-memory.sh`. Set up Syncthing to sync `.claude/` between your desktop and NAS.
 
-### 7. 配置 MCP 桥接（可选）
+### 7. MCP Bridge (optional) · MCP 桥接
 
-将本机 Claude Code 和 NAS CC 连接，让 Windows CC 能直接派任务给 NAS：
+Connect your desktop Claude Code to the NAS instance:
 
-1. 进入 `mcp-nas-bridge/` 目录：`npm install`
-2. 复制 `.mcp.json` 到 `~/.claude/.mcp.json`，修改路径
-3. 重启 Claude Code
+```bash
+cd mcp-nas-bridge && npm install
+cp .mcp.json ~/.claude/.mcp.json   # edit path inside first
+# Restart Claude Code
+```
 
-## 📁 文件说明
+---
 
-| 文件 | 用途 |
-|------|------|
-| `Dockerfile` | 容器构建文件 |
-| `docker-compose.yml` | 一键部署配置 |
-| `server.js` | Web 聊天服务器（零依赖） |
-| `settings.json` | Claude Code 配置模板 |
-| `sync-memory.sh` | 记忆同步脚本 |
-| `.mcp.json` | MCP 桥接配置文件 |
-| `mcp-nas-bridge/` | MCP 桥接代码（Node.js） |
-| `docs/` | 完整部署文档 |
+## 📁 Files · 文件说明
 
-## ⚠️ 注意事项
+| File | Purpose |
+|------|---------|
+| `Dockerfile` | Container build |
+| `docker-compose.yml` | One-command deploy (replace API key first) |
+| `server.js` | Web chat server — zero dependencies, plain Node.js |
+| `settings.json` | Claude Code config template |
+| `sync-memory.sh` | Bi-directional memory sync between Windows & NAS CC |
+| `.mcp.json` | MCP bridge config (desktop side) |
+| `mcp-nas-bridge/` | MCP stdio server — exposes `nas_bib_chat` tool |
+| `docs/deploy-guide.md` | Full deployment guide with 18 troubleshooting entries |
 
-- **不要**把你的真实 API Key 提交到 GitHub。本项目所有配置文件中 Key 已替换为占位符
-- Tailscale 的协调服务器在海外，偶尔可能不稳定（国内实测可用）
-- NAS CC 运行在 **headless 模式**（`claude -p`），不支持交互式 TUI
+---
 
-## 🔧 踩坑经验
+## ⚠️ Notes · 注意事项
 
-完整的踩坑记录和解决方案见 [`docs/NAS-ClaudeCode-部署文档.md`](docs/NAS-ClaudeCode-部署文档.md)。
+- 🔑 **Never** commit your real API key. All keys in this repo are placeholders.
+- 🌐 Tailscale's coordination server is overseas; may occasionally be flaky in China (tested: works).
+- 🤖 NAS CC runs in **headless mode** (`claude -p`). Interactive TUI is not supported in Docker with third-party APIs.
+- 📦 Docker Hub needs a registry mirror in mainland China (see deploy guide).
 
-关键发现：
-- Claude Code v2.1 的交互模式在 Docker 中强制 OAuth，必须用 headless 模式
-- Docker Hub 国内需要配镜像加速
-- Syncthing 容器需要匹配宿主机的 UID/GID
-- 项目目录 hash 在 Windows 和 Linux 上不同，记忆同步需要处理
+---
 
-## 📄 许可证
+## 🔧 Key Findings · 关键发现
 
-MIT License — 随意使用、修改、分发。
+Full troubleshooting log in [`docs/deploy-guide.md`](docs/deploy-guide.md) (Chinese, 18 entries).
 
-## ⭐ 支持
+- Claude Code v2.1's interactive mode forces OAuth in Docker → must use headless mode
+- Docker Hub blocked in China → use `registry-mirrors`
+- Syncthing container needs matching host UID/GID
+- Project directory hashes differ between Windows (`C--Users-Administrator`) and Linux (`eab0d61a`)
 
-如果这个项目对你有用，给个 Star ⭐ 让更多人看到。
+---
 
-有问题欢迎提 [Issue](https://github.com/你的用户名/nas-claude-code/issues)！
+## 📄 License · 许可证
+
+MIT — use, modify, and distribute freely.
+
+---
+
+## ⭐ Support · 支持
+
+If this project helps you, give it a Star ⭐ to help others find it.
+
+Questions? Open an [Issue](https://github.com/fubob13013-afk/nas-claude-code/issues)!
