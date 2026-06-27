@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "nas-bib-bridge": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["C:/Users/你的用户名/.claude/mcp-nas-bridge/index.js"]
+    }
+  }
+}

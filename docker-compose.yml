@@ -1,0 +1,16 @@
+services:
+  claude-code:
+    build: .
+    container_name: claude-code
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - ANTHROPIC_BASE_URL=https://api.deepseek.com/anthropic
+      - ANTHROPIC_API_KEY=你的DeepSeek_API_Key
+    volumes:
+      - ./workspace:/workspace
+      - ./claude-config:/home/ccuser/.claude
+    working_dir: /workspace

@@ -1,0 +1,9 @@
+{
+  "name": "mcp-nas-bridge",
+  "version": "1.0.0",
+  "description": "MCP bridge to connect local Claude Code to a NAS-hosted Claude Code instance",
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}

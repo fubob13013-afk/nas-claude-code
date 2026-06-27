@@ -1,0 +1,22 @@
+# 环境变量（含 API Key）
+.env
+
+# CC 个人配置目录
+claude-config/
+
+# 工作目录
+workspace/
+
+# Node 依赖
+node_modules/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# Syncthing 冲突文件
+*.sync-conflict*
+
+# IDE
+.vscode/
+.idea/
