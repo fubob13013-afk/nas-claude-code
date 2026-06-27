@@ -49,7 +49,7 @@ Windows PC
 ### 1. 克隆仓库到 NAS
 
 ```bash
-git clone https://github.com/你的用户名/nas-claude-code.git
+git clone https://github.com/fubob13013-afk/nas-claude-code.git
 cd nas-claude-code
 ```
 
