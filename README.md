@@ -153,6 +153,20 @@ Full troubleshooting log in [`docs/deploy-guide.md`](docs/deploy-guide.md) (Chin
 
 ---
 
+## 🙏 Acknowledgments · 致谢
+
+This project is built on excellent open infrastructure:
+
+- **[Claude Code](https://code.claude.com/docs/zh-TW/third-party-model)** — Anthropic's official CLI, supports custom API endpoints via `ANTHROPIC_BASE_URL`
+- **[DeepSeek](https://platform.deepseek.com)** — Chinese AI lab providing an Anthropic-compatible API at `/anthropic`, making this project possible without OAuth
+- **[Tailscale](https://tailscale.com)** — Free WireGuard-based mesh VPN (up to 100 devices), enabling secure remote access with zero open ports
+- **[Syncthing](https://syncthing.net)** — Open-source continuous file synchronization, used for sharing CLAUDE.md and memory between devices
+- **[MCP SDK](https://github.com/modelcontextprotocol/sdk)** — Model Context Protocol SDK, used to bridge the desktop Claude Code to the NAS instance
+
+本项目建立在以下基础设施之上：Claude Code 官方 CLI、DeepSeek 兼容 API、Tailscale 免费 VPN、Syncthing 文件同步、MCP 协议 SDK。
+
+---
+
 ## 📄 License · 许可证
 
 MIT — use, modify, and distribute freely.
