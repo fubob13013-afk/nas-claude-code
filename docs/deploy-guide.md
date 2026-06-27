@@ -516,6 +516,40 @@ bash /home/傅宬博/claude-code/sync-memory-host.sh
 
 ---
 
+## 十、发布与传播
+
+### 10.1 平台覆盖
+
+| 平台 | 内容类型 | 目标人群 | 状态 |
+|------|---------|---------|------|
+| GitHub | 开源仓库 + 双语 README | 全球开发者 | ✅ https://github.com/fubob13013-afk/nas-claude-code |
+| 小红书 | 图文 + Tag | 国内 AI 工具 / 效率党 | ✅ |
+| 微信朋友圈 | 第一人称短文 | 同学 / 熟人 | ✅ |
+| 哔哩哔哩 | 文档 | 技术爱好者 | ✅ |
+| 什么值得买 | NAS 部署记录 | NAS 玩家 / 自托管爱好者 | ✅ |
+| Reddit r/selfhosted | 集中帖投稿 | 国际自托管社区 | ✅ |
+
+### 10.2 社交媒体文案
+
+| 文件 | 路径 |
+|------|------|
+| 小红书文案 | `E:\OneDrive\Desktop\小红书文案.md` |
+| 朋友圈文案 | `E:\OneDrive\Desktop\朋友圈文案.md` |
+| 什么值得买文案 | `E:\OneDrive\Desktop\什么值得买文案.md` |
+| Reddit 文案 | `E:\OneDrive\Desktop\Reddit文案.md` |
+| GitHub 发布指南 | `E:\OneDrive\Desktop\GitHub发布指南.md` |
+
+### 10.3 GitHub 仓库信息
+
+- **地址**：https://github.com/fubob13013-afk/nas-claude-code
+- **SSH Key**：`C:\Users\Administrator\.ssh\id_github`（已配置 `~/.ssh/config`）
+- **推送命令**：`cd C:\Users\Administrator\nas-claude-code-release && git push`
+- **仓库文件**：12 个文件（Dockerfile, docker-compose.yml, server.js, settings.json, sync-memory.sh, .mcp.json, mcp-nas-bridge/, docs/, README.md, LICENSE, .gitignore）
+- **README**：中英双语，含 Architecture 图、Quick Start、致谢章节
+
+---
+
 > **项目完成日期**：2026-06-27  
 > **维护者**：傅宬博 (Bob)  
+> **GitHub**：https://github.com/fubob13013-afk/nas-claude-code  
 > **下次继续时**：文档在本文件 + 记忆文件 `nas-claude-code-deepseek.md` 中自动引用
